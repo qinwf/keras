@@ -25,6 +25,7 @@ class _CuDNNRNN(RNN):
                  return_sequences=False,
                  return_state=False,
                  stateful=False,
+                 go_backwards=False,
                  **kwargs):
         if K.backend() != 'tensorflow':
             raise RuntimeError('CuDNN RNNs are only available '
@@ -33,6 +34,7 @@ class _CuDNNRNN(RNN):
         self.return_sequences = return_sequences
         self.return_state = return_state
         self.stateful = stateful
+        self.go_backwards = go_backwards
         self.supports_masking = False
         self.input_spec = [InputSpec(ndim=3)]
         if hasattr(self.cell.state_size, '__len__'):
@@ -67,6 +69,9 @@ class _CuDNNRNN(RNN):
         else:
             initial_state = self.get_initial_state(inputs)
 
+        if self.go_backwards:
+            inputs = K.reverse(inputs, 0)
+
         if len(initial_state) != len(self.states):
             raise ValueError('Layer has ' + str(len(self.states)) +
                              ' states but was passed ' +
@@ -89,7 +94,10 @@ class _CuDNNRNN(RNN):
     def get_config(self):
         config = {'return_sequences': self.return_sequences,
                   'return_state': self.return_state,
-                  'stateful': self.stateful}
+                  'stateful': self.stateful,
+                  'go_backwards': self.go_backwards,
+                  'dropout': 0,
+                  'recurrent_dropout': 0}
         base_config = super(RNN, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
@@ -175,6 +183,7 @@ class CuDNNGRU(_CuDNNRNN):
                  return_sequences=False,
                  return_state=False,
                  stateful=False,
+                 go_backwards=False,
                  **kwargs):
         self.units = units
         super(CuDNNGRU, self).__init__(
@@ -368,12 +377,14 @@ class CuDNNLSTM(_CuDNNRNN):
                  return_sequences=False,
                  return_state=False,
                  stateful=False,
+                 go_backwards=False,
                  **kwargs):
         self.units = units
         super(CuDNNLSTM, self).__init__(
             return_sequences=return_sequences,
             return_state=return_state,
             stateful=stateful,
+            go_backwards=go_backwards,
             **kwargs)
 
         self.kernel_initializer = initializers.get(kernel_initializer)

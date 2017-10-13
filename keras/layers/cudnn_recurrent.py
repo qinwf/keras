@@ -95,9 +95,7 @@ class _CuDNNRNN(RNN):
         config = {'return_sequences': self.return_sequences,
                   'return_state': self.return_state,
                   'stateful': self.stateful,
-                  'go_backwards': self.go_backwards,
-                  'dropout': 0,
-                  'recurrent_dropout': 0}
+                  'go_backwards': self.go_backwards}
         base_config = super(RNN, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
@@ -301,6 +299,8 @@ class CuDNNGRU(_CuDNNRNN):
     def get_config(self):
         config = {
             'units': self.units,
+            'dropout': 0,
+            'recurrent_dropout': 0,
             'kernel_initializer': initializers.serialize(self.kernel_initializer),
             'recurrent_initializer': initializers.serialize(self.recurrent_initializer),
             'bias_initializer': initializers.serialize(self.bias_initializer),
@@ -517,6 +517,8 @@ class CuDNNLSTM(_CuDNNRNN):
     def get_config(self):
         config = {
             'units': self.units,
+            'dropout': 0,
+            'recurrent_dropout': 0,
             'kernel_initializer': initializers.serialize(self.kernel_initializer),
             'recurrent_initializer': initializers.serialize(self.recurrent_initializer),
             'bias_initializer': initializers.serialize(self.bias_initializer),

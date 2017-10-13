@@ -189,7 +189,8 @@ class CuDNNGRU(_CuDNNRNN):
             return_state=return_state,
             stateful=stateful,
             **kwargs)
-
+        self.dropout = 0
+        self.recurrent_dropout = 0
         self.kernel_initializer = initializers.get(kernel_initializer)
         self.recurrent_initializer = initializers.get(recurrent_initializer)
         self.bias_initializer = initializers.get(bias_initializer)
@@ -299,8 +300,6 @@ class CuDNNGRU(_CuDNNRNN):
     def get_config(self):
         config = {
             'units': self.units,
-            'dropout': 0,
-            'recurrent_dropout': 0,
             'kernel_initializer': initializers.serialize(self.kernel_initializer),
             'recurrent_initializer': initializers.serialize(self.recurrent_initializer),
             'bias_initializer': initializers.serialize(self.bias_initializer),
@@ -386,6 +385,9 @@ class CuDNNLSTM(_CuDNNRNN):
             stateful=stateful,
             go_backwards=go_backwards,
             **kwargs)
+
+        self.dropout = 0
+        self.recurrent_dropout = 0
 
         self.kernel_initializer = initializers.get(kernel_initializer)
         self.recurrent_initializer = initializers.get(recurrent_initializer)
@@ -517,8 +519,6 @@ class CuDNNLSTM(_CuDNNRNN):
     def get_config(self):
         config = {
             'units': self.units,
-            'dropout': 0,
-            'recurrent_dropout': 0,
             'kernel_initializer': initializers.serialize(self.kernel_initializer),
             'recurrent_initializer': initializers.serialize(self.recurrent_initializer),
             'bias_initializer': initializers.serialize(self.bias_initializer),
